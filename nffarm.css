@@ -1,0 +1,347 @@
+#world table {
+	border-spacing: 0px;
+}
+
+#world td {
+	width: 10px;
+    height: 10px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.black{
+	background: black !important;
+}
+
+.me:not(.black){
+	background: white !important;
+}
+
+.me:after {
+	content: "" !important;
+}
+
+.floor {
+	background-color: yellow;
+}
+
+.computer {
+	background-color: grey;
+}
+
+.bed  {
+	background-color: silver;
+}
+
+.door
+{
+	background-color: red;
+}
+
+.stable
+{
+	background-color: silver;
+}
+
+.machineroom
+{
+	background-color: black;
+}
+
+.green {
+	background-color: green;
+}
+
+.home {
+	background-color: brown;
+}
+
+.field {
+	background-color: yellow;
+}
+
+.carrot:after {
+	content: "'''";
+}
+
+.carrot {
+	color: orange;
+}
+
+.salat:after {
+	content: "*";
+}
+
+.salat {
+	color: green;
+}
+
+.cuke:after {
+	content: "'''";
+}
+
+.cuke {
+	color: green;
+}
+
+.watermelon:after {
+	content: "OO";
+	font-size: 45%;
+	text-decoration: underline;
+}
+
+.watermelon {
+	color: red;
+}
+
+.strawberry:after {
+	content: "::::";
+	font-size: 50%;
+}
+
+.strawberry {
+	color: red;
+}
+
+.bean:after {
+	content: "|||||";
+	font-size: 50%;
+}
+
+.bean {
+	color: green;
+}
+
+.wheat:after {
+	content: "|||||";
+	font-size: 50%;
+}
+
+.wheat {
+	color: brown;
+}
+
+.cow:after {
+	content: "::::";
+	font-size: 50%;
+}
+
+.cow {
+	color: black;
+	background-color: white;
+}
+
+.cow[feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		white 85%,
+		brown 15%
+	);
+}
+
+.cow[watered="true"] {
+	background: linear-gradient(
+		to bottom,
+		white 85%,
+		blue 15%
+	);
+}
+
+.cow[watered="true"][feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		white 50%,
+		blue,
+		brown
+	);
+}
+
+.cow[pregnant="0"][spendtime="0"] {
+	background: linear-gradient(
+		to bottom,
+		white 85%,
+		orange 15%
+	);
+}
+
+.oven
+{
+	background-color: black;
+	color: white;
+}
+
+.oven:not([recipient="none"])
+{
+	color: red;
+}
+
+.oven:after
+{
+	content: ".[].";
+	font-size: 50%;
+}
+
+.feedingtrough[fill="0"]
+{
+	background: silver;
+}
+
+.feedingtrough
+{
+	background: linear-gradient(
+		to bottom,
+		silver 85%,
+		black 15%
+	);
+}
+
+.watertrough[fill="0"]
+{
+	background: silver;
+}
+
+.watertrough
+{
+	background: linear-gradient(
+		to bottom,
+		silver 85%,
+		blue 15%
+	);
+}
+
+.sprinkler
+{
+	background-color: green;
+	color: white;
+}
+
+.sprinkler:after
+{
+	content: "+";
+}
+
+.cheesepress
+{
+	background-color: grey;
+	color: black;
+}
+
+.cheesepress:not([recipient="none"])
+{
+	color: white;
+}
+
+.cheesepress:after
+{
+	content: ".tt.";
+	font-size: 50%;
+}
+
+.watered {
+	background: linear-gradient(
+		to bottom,
+		yellow,
+		yellow 85%,
+		blue 15%,
+		blue
+	);
+}
+
+.field[step="0"]{
+	background: linear-gradient(
+		to bottom,
+		yellow 85%,
+		darkorange 15%
+	);
+}
+
+.fountain[water="10"] {
+	background: linear-gradient(
+		to bottom,
+		#5c513d,
+		#5c513d 85%,
+		blue 15%,
+		blue
+	);
+}
+
+.fountain[water="0"] {
+	background-color: #5c513d;
+}
+
+.way {
+	background-color: #997a00;
+}
+
+.gate {
+	background-color: #997a00;
+	color: silver;
+}
+
+.gate:after {
+	content: "*"
+}
+
+.speaker-me:after
+{
+	content: "Ich";
+}
+
+.eiwollmilchsau
+{
+	background-color: brown;
+}
+
+.eiwollmilchsau:after
+{
+	content: "----";
+	font-size: 50%;
+}
+
+.harvester
+{
+	background-color: chocolate;
+}
+
+.harvester:after
+{
+	content: "o-o";
+	font-size: 50%;
+}
+
+.planter
+{
+	background-color: darkorange;
+}
+
+.planter:after
+{
+	content: "o-o";
+	font-size: 50%;
+}
+
+.dialogoption {
+	background-color: silver;
+	cursor: pointer;
+}
+
+.activedialogoption {
+	background-color: #ccffff !important;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
