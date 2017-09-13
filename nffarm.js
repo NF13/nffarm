@@ -25,8 +25,9 @@ var machines = [
 ];
 
 var recipients = [
-	{name: "Brot", type: "bread", machine: "oven", time: 0, sell: 100, ingredients: [{type: "wheat", count: 10}]},
-	{name: "K&auml;se", type: "cheese", machine: "cheesepress", time: 2, sell: 50, ingredients: [{type: "cow", count: 2}]}
+	{name: "Brot", type: "bread", machine: "oven", time: 0, sell: 100, ingredients: [{type: "wheat", count: 2}]},
+	{name: "K&auml;se", type: "cheese", machine: "cheesepress", time: 2, sell: 50, ingredients: [{type: "cow", count: 2}]},
+	{name: "Kuchen", type: "cake", machine: "oven", time: 1, sell: 150, ingredients: [{type: "cow", count: 1}, {type: "wheat", count: 1}, {type: "chicken", count: 1}]}
 ]
 
 var dialogActive;

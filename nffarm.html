@@ -3,7 +3,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="nffarm.css">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-<div id="stats">Geld: <span id="money"></span> Wasser: <span id="water"></span>
+<div id="stats">Geld: <span id="money"></span> Wasser: <span id="water" name="Wasser"></span>
 <br>
 Karotten: <span id="carrot" class="plants" name="Karotten" step="3" buy="10" sell="20">0</span>/<span id="carrotseed">0</span>
 Salat: <span id="salat" class="plants" name="Salat" step="5" buy="20" sell="40">0</span>/<span id="salatseed">0</span>
@@ -14,10 +14,12 @@ Bohnen: <span id="bean" class="plants" name="Bohnen" step="6" buy="21" sell="80"
 Weizen: <span id="wheat" class="plants" name="Weizen" step="4" buy="15" sell="30">0</span>/<span id="wheatseed">0</span>
 <br>
 Milch: <span id="cow" class="animal" animalname="Kuh" name="Milch" pregnant="6" buy="100" spendtime="1" sell="10">0</span>
+Eier: <span id="chicken" class="animal" animalname="Huhn" name="Eier" pregnant="4" buy="50" spendtime="1" sell="20">0</span>
 <br>
 <!-- Muss in den recipients gepflegt werden -->
-Brot <span id="bread" name="Brot">0</span>
-K&auml;se <span id="cheese" name="K&auml;se">0</span>
+Brot: <span id="bread" name="Brot">0</span>
+K&auml;se: <span id="cheese" name="K&auml;se">0</span>
+Kuchen: <span id="cake" name="Kuchen">0</span> 
 </div>
 <div id="world"></div>
 <div class="loader" style="display:none;"></div>

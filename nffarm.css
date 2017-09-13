@@ -164,6 +164,49 @@
 	);
 }
 
+.chicken:after {
+	content: "_o_";
+	font-size: 50%;
+}
+
+.chicken {
+	color: black;
+	background-color: maroon;
+}
+
+.chicken[feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		maroon 85%,
+		brown 15%
+	);
+}
+
+.chicken[watered="true"] {
+	background: linear-gradient(
+		to bottom,
+		maroon 85%,
+		blue 15%
+	);
+}
+
+.chicken[watered="true"][feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		maroon 50%,
+		blue,
+		brown
+	);
+}
+
+.chicken[pregnant="0"][spendtime="0"] {
+	background: linear-gradient(
+		to bottom,
+		maroon 85%,
+		white 15%
+	);
+}
+
 .oven
 {
 	background-color: black;
