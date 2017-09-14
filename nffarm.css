@@ -363,6 +363,18 @@
 	font-size: 50%;
 }
 
+.pump
+{
+	background-color: black;
+	color: silver;
+}
+
+.pump:after
+{
+	content: "|--|";
+	font-size: 50%;
+}
+
 .dialogoption {
 	background-color: silver;
 	cursor: pointer;

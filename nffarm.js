@@ -16,7 +16,8 @@ var buildings = [{name: "field", type: "field", group: "farm", funct: "fieldDial
 				{name: "watertrough", type: "watertrough", group: "stable", funct: "waterTroughDialog();", initialAttributes: [{key: "fill", value: 10}]},
 				{name: "eiwollmilchsau", type: "eiwollmilchsau", group: "stable", funct: "eiWollMilchSauDialog();", initialAttributes: [{key: "things", value: []}]},
 				{name: "harvester", type: "harvester", group: "farm", funct: "harvesterDialog();", initialAttributes: []},
-				{name: "planter", type: "planter", group: "farm", funct: "planterDialog();", initialAttributes: []}
+				{name: "planter", type: "planter", group: "farm", funct: "planterDialog();", initialAttributes: []},
+				{name: "pump", type: "pump", group: "farm", funct: "pumpDialog();", initialAttributes: [{key: "water", value: 10}]}
 				];
 				
 var machines = [
@@ -723,6 +724,28 @@ function sleep()
 				}
 			});
 		}
+		else if(value.name == 'pump')
+		{
+			var addedWater = 0;
+			$.each(buildedBuildings, function( index, fountain ) {
+				if(fountain.name == 'fountain' && fountain.map == value.map)
+				{
+					$.each(fountain.attributes, function( index, attribute ) {
+						if(attribute.key == 'water')
+						{
+							addedWater = addedWater + attribute.value;
+							attribute.value = 0;
+						}
+					});
+				}
+			});
+			$.each(value.attributes, function( index, attribute ) {
+				if(attribute.key == 'water')
+				{
+					attribute.value = attribute.value + addedWater;
+				}
+			});
+		}
 	});
 	$('.loader').hide();
 	addDialog({speaker: 'speaker-me', text: 'G&auml;&auml;hhnn, genug geschlafen ran an die Arbeit!', options: [{text: 'Arbeit, Arbeit', funct: 'closeDialog()'}]});
@@ -1175,7 +1198,8 @@ function buildFarmDialog()
 		{text: 'Brunnen (200 Euro)', funct: 'buildBuilding(\'fountain\', 200);'},
 		{text: 'Sprinkler (1000 Euro)', funct: 'buildBuilding(\'sprinkler\', 1000);'},
 		{text: 'Erntemaschine (10000 Euro)', funct: 'buildBuilding(\'harvester\', 10000);'},
-		{text: 'Pflanzmaschine (10000 Euro)', funct: 'buildBuilding(\'planter\', 10000);'}
+		{text: 'Pflanzmaschine (10000 Euro)', funct: 'buildBuilding(\'planter\', 10000);'},
+		{text: 'Pumpe (10000 Euro)', funct: 'buildBuilding(\'pump\', 10000);'}
 	];
 	var cell = $('.me');
 	var x = cell.attr('x');
@@ -1468,6 +1492,19 @@ function fountainDialog()
 	}
 }
 
+function pumpDialog()
+{
+	var cell = $('.me');
+	if(eval(cell.attr('water'))>0)
+	{
+		addDialog({speaker: 'speaker-me', text: 'Die Pumpe hat Wasser von meinen Brunnen gesammelt, ich sollte es sch&ouml;pfen', options: [{text: 'Wasser sch&oumlpfen', funct: 'waterPump();closeDialog();'}, {text: 'Nichts', funct: 'closeDialog()'},{text: 'Abrei&szlig;en', funct: 'destroyBuilding()'}]});
+	}
+	else
+	{
+		addDialog({speaker: 'speaker-me', text: 'Die Pumpe hat kein Wasser aus meinen Brunnen, ich sollte bis morgen warten.', options: [{text: 'Nichts', funct: 'closeDialog()'}, {text: 'Abrei&szlig;en', funct: 'destroyBuilding()'}]});
+	}
+}
+
 function waterFountain()
 {
 	var cell = $('.me');
@@ -1480,6 +1517,22 @@ function waterFountain()
 		if(attribute.key == 'water')
 		{
 			attribute.value = fountainWater - 10;
+		}
+	});
+}
+
+function waterPump()
+{
+	var cell = $('.me');
+	var water = eval($('#water').text());
+	var fountainWater = eval(cell.attr('water'));
+	$('#water').text(water + fountainWater);
+	cell.attr('water', 0);
+	var index = cell.attr('arrayIndex');
+	$.each(buildedBuildings[index].attributes, function( index, attribute ) {
+		if(attribute.key == 'water')
+		{
+			attribute.value = 0;
 		}
 	});
 }
