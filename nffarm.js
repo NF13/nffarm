@@ -17,7 +17,9 @@ var buildings = [{name: "field", type: "field", group: "farm", funct: "fieldDial
 				{name: "eiwollmilchsau", type: "eiwollmilchsau", group: "stable", funct: "eiWollMilchSauDialog();", initialAttributes: [{key: "things", value: []}]},
 				{name: "harvester", type: "harvester", group: "farm", funct: "harvesterDialog();", initialAttributes: []},
 				{name: "planter", type: "planter", group: "farm", funct: "planterDialog();", initialAttributes: []},
-				{name: "pump", type: "pump", group: "farm", funct: "pumpDialog();", initialAttributes: [{key: "water", value: 10}]}
+				{name: "pump", type: "pump", group: "farm", funct: "pumpDialog();", initialAttributes: [{key: "water", value: 10}]},
+				{name: "fillrobotor", type: "fillrobotor", group: "machineroom", funct: "fillrobotorDialog();", initialAttributes: []},
+				{name: "emptyrobotor", type: "emptyrobotor", group: "machineroom", funct: "emptyrobotorDialog();", initialAttributes: []}
 				];
 				
 var machines = [
@@ -883,6 +885,8 @@ function buildMachineDialog()
 	$.each(machines, function( index, value ) {
 		options.push({text: value.name+' ('+value.price+' Euro)', funct: 'buildBuilding(\''+value.type+'\', '+value.price+');'});
 	});
+	options.push({text: 'F&uuml;llrobotor (25000 Euro)', funct: 'buildBuilding(\'fillrobotor\', 25000);'});
+	options.push({text: 'Leerungsrobotor (25000 Euro)', funct: 'buildBuilding(\'emptyrobotor\', 25000);'});
 	options.push({text: 'Nichts', funct: 'closeDialog()'});	
 	addDialog({speaker: 'speaker-me', text: 'Welche Machine soll ich anschaffen?', options: options});
 }
@@ -920,37 +924,98 @@ function machineDialog()
 	}
 }
 
+function emptyrobotorDialog()
+{
+	addDialog({speaker: 'speaker-me', text: 'Soll ich den Robotor los schicken um alle fertigen Maschinen zu entleeren', options: [{text: 'Ja', funct: 'getAllRecipient()'}, {text: 'Nein', funct: 'closeDialog()'}, {text: 'Robotor vernichten', funct: 'destroyBuilding()'}]});
+}
+
+function fillrobotorDialog()
+{
+	var options = [];
+	$.each(recipients, function( index, value ) {
+		var ingredients = "";
+		$.each(value.ingredients, function( index, ingredient ) {
+			ingredients = ingredients + " "+ingredient.count+ "x "+$('#'+ingredient.type).attr('name');
+		});
+		var machine;
+		$.each(machines, function( index, tempMachine ) {
+			if(tempMachine.type == value.machine)
+			{
+				machine = tempMachine;
+			}
+		});
+		options.push({text: value.name+' ('+ingredients+' ) Maschine '+machine.name, funct: 'makeAllRecipient(\''+value.type+'\');'});
+	});
+	options.push({text: 'Nichts', funct: 'closeDialog()'});
+	options.push({text: 'Robotor vernichten', funct: 'destroyBuilding()'});
+	addDialog({speaker: 'speaker-me', text: 'Welches Rezept soll ich den Robotor herstellen lassen.', options: options});
+}
+
+function makeAllRecipient(type)
+{
+	var recipient;
+	$.each(recipients, function( recipientIndex, value ) {
+		if(value.type == type)
+		{
+			recipient = value;
+		}
+	});
+	var startCell = $(".me");
+	$.each($("."+recipient.machine+"[recipient='none']"), function( i, value ) {
+		if(checkIngredient(recipient))
+		{
+			var me = $(".me");
+			$(value).addClass('me');
+			me.removeClass('me');
+			makeOnlyRecipient(recipient);
+		}
+	});
+	$(".me").removeClass('me');
+	startCell.addClass('me');
+	addDialog({speaker: 'speaker-me', text: 'Alles erledigt!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+}
+
+function checkIngredient(recipient)
+{
+	var ingredientCheck = true;
+	$.each(recipient.ingredients, function( ingredientIndex, ingredient ) {
+		if(eval($('#'+ingredient.type).text()) < ingredient.count)
+		{
+			ingredientCheck = false;
+		}
+	});
+	return ingredientCheck;
+}
+
+function makeOnlyRecipient(recipient)
+{
+	$.each(recipient.ingredients, function( ingredientIndex, ingredient ) {
+		$('#'+ingredient.type).text(eval($('#'+ingredient.type).text())-ingredient.count)
+	});
+	var cell = $('.me');
+	var index = cell.attr('arrayIndex');
+	$.each(buildedBuildings[index].attributes, function( attributeIndex, attribute ) {
+		if(attribute.key == 'recipient')
+		{
+			attribute.value = recipient.type;
+		}
+		else if(attribute.key == 'timeneeded')
+		{
+			attribute.value = recipient.time;
+		}
+	});
+	cell.attr("recipient", recipient.type);
+	cell.attr("timeneeded", recipient.time);
+}
+
 function makeRecipient(type)
 {
 	$.each(recipients, function( recipientIndex, value ) {
 		if(value.type == type)
 		{
-			var ingredientCheck = true;
-			$.each(value.ingredients, function( ingredientIndex, ingredient ) {
-				if(eval($('#'+ingredient.type).text()) < ingredient.count)
-				{
-					ingredientCheck = false;
-				}
-			});
-			if(ingredientCheck)
+			if(checkIngredient(value))
 			{
-				$.each(value.ingredients, function( ingredientIndex, ingredient ) {
-					$('#'+ingredient.type).text(eval($('#'+ingredient.type).text())-ingredient.count)
-				});
-				var cell = $('.me');
-				var index = cell.attr('arrayIndex');
-				$.each(buildedBuildings[index].attributes, function( attributeIndex, attribute ) {
-					if(attribute.key == 'recipient')
-					{
-						attribute.value = type;
-					}
-					else if(attribute.key == 'timeneeded')
-					{
-						attribute.value = value.time;
-					}
-				});
-				cell.attr("recipient", type);
-				cell.attr("timeneeded", value.time);
+				makeOnlyRecipient(value);
 				machineDialog();
 			}
 			else
@@ -961,7 +1026,21 @@ function makeRecipient(type)
 	});
 }
 
-function getRecipient()
+function getAllRecipient()
+{
+	var startCell = $(".me");
+	$.each($( "[timeneeded='0']" ).not( "[recipient='none']" ), function( i, value ) {
+		var me = $(".me");
+		$(value).addClass('me');
+		me.removeClass('me');
+		getOnlyRecipient();
+	});
+	$(".me").removeClass('me');
+	startCell.addClass('me');
+	addDialog({speaker: 'speaker-me', text: 'Alles erledigt!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+}
+
+function getOnlyRecipient()
 {
 	var cell = $('.me');
 	var id = cell.attr('recipient');
@@ -974,6 +1053,11 @@ function getRecipient()
 		}
 	});
 	cell.attr("recipient", "none");
+}
+
+function getRecipient()
+{
+	getOnlyRecipient();
 	machineDialog();
 }
 

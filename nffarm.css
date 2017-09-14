@@ -218,6 +218,11 @@
 	color: red;
 }
 
+.oven[timeneeded="0"]:not([recipient="none"])
+{
+	color: yellow;
+}
+
 .oven:after
 {
 	content: ".[].";
@@ -272,6 +277,11 @@
 .cheesepress:not([recipient="none"])
 {
 	color: white;
+}
+
+.cheesepress[timeneeded="0"]:not([recipient="none"])
+{
+	color: yellow;
 }
 
 .cheesepress:after
@@ -372,6 +382,30 @@
 .pump:after
 {
 	content: "|--|";
+	font-size: 50%;
+}
+
+.fillrobotor
+{
+	background-color: silver;
+	color: black;
+}
+
+.fillrobotor:after
+{
+	content: "-O-";
+	font-size: 50%;
+}
+
+.emptyrobotor
+{
+	background-color: lightslategrey ;
+	color: black;
+}
+
+.emptyrobotor:after
+{
+	content: "-O-";
 	font-size: 50%;
 }
 
