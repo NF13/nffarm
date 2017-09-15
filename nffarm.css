@@ -52,6 +52,22 @@
 	background-color: green;
 }
 
+.stone {
+	background-color: brown;
+}
+
+.hole {
+	background-color: black;
+}
+
+.sand{
+	background-color: yellow;
+}
+
+.ironore{
+	background-color: darkred;
+}
+
 .home {
 	background-color: brown;
 }
@@ -224,6 +240,28 @@
 }
 
 .oven:after
+{
+	content: ".[].";
+	font-size: 50%;
+}
+
+.furnace
+{
+	background-color: silver;
+	color: white;
+}
+
+.furnace:not([recipient="none"])
+{
+	color: red;
+}
+
+.furnace[timeneeded="0"]:not([recipient="none"])
+{
+	color: yellow;
+}
+
+.furnace:after
 {
 	content: ".[].";
 	font-size: 50%;

@@ -1,5 +1,6 @@
 var home = {name: "home", x:5, y:5, type: "floor", elements:[{x:0,y:0,type:"computer", funct:"useComputer();"}, {x:0,y:3,type:"bed", funct:"bedDialog();"}], ends: [{x:3, y:4, to: "farm", type:"door"}]}
-var farm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[{x:10, y:10, to: "home", type: "home"}]}
+var farm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[{x:10, y:10, to: "home", type: "home"}, {x:2, y:0, to: "mine", type: "gate"}]}
+var mine = {name: "mine", x:135, y:50, type: "stone", elements:[], ends:[{x:65, y:49, to: "farm", type: "hole"}, {x:65, y:25, to: "mine", type: "hole"}], afterGenerate: "generateMining()"}
 var emptyFarm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[]}
 var emptyStable = {name: "stable", funct: "buildStableDialog();", x:40, y:40, type: "floor", elements:[], ends:[], initialEnd:{x:20, y:39}}
 var emptyMachineroom = {name: "machineroom", funct: "buildMachineDialog();", x:40, y:40, type: "floor", elements:[], ends:[], initialEnd:{x:20, y:39}}
@@ -27,7 +28,8 @@ var machines = [
 	{name: "Ofen", type: "oven", price: 10000},
 	{name: "K&auml;sepresse", type: "cheesepress", price: 15000},
 	{name: "&Ouml;ldestilator", type: "oildestilation", price: 15000},
-	{name: "Spritzgussmaschine", type: "injectionmolding", price: 15000}
+	{name: "Spritzgussmaschine", type: "injectionmolding", price: 15000},
+	{name: "Schmelzofen", type: "furnace", price: 15000}
 ];
 
 var recipients = [
@@ -35,7 +37,9 @@ var recipients = [
 	{name: "K&auml;se", type: "cheese", machine: "cheesepress", time: 2, sell: 50, ingredients: [{type: "cow", count: 2}]},
 	{name: "Kuchen", type: "cake", machine: "oven", time: 1, sell: 150, ingredients: [{type: "cow", count: 1}, {type: "wheat", count: 1}, {type: "chicken", count: 1}]},
 	{name: "Plastik", type: "plastik", machine: "oildestilation", time: 1, sell: 200, ingredients: [{type: "oil", count: 10}]},
-	{name: "Gummiente", type: "rubberduck", machine: "injectionmolding", time: 0, sell: 600, ingredients: [{type: "plastik", count: 2}]}
+	{name: "Gummiente", type: "rubberduck", machine: "injectionmolding", time: 0, sell: 600, ingredients: [{type: "plastik", count: 2}]},
+	{name: "Glass", type: "glass", machine: "furnace", time: 1, sell: 50, ingredients: [{type: "sand", count: 5}]},
+	{name: "Eisen", type: "iron", machine: "furnace", time: 1, sell: 100, ingredients: [{type: "ironore", count: 5}]}
 ]
 
 var dialogActive;
@@ -93,6 +97,7 @@ function startGame()
 		machine.initialAttributes.push({key: "recipient", value: "none"});
 		buildings.push(machine);
 	});
+
 }
 
 function generateWorld(world)
@@ -166,6 +171,41 @@ function generateWorld(world)
 			cell.attr('name', value.name);
 		}
 	});
+	if(world.afterGenerate)
+	{
+		eval(world.afterGenerate);
+	}
+}
+
+function generateMining()
+{
+	var i = 0;
+	do
+	{
+		var x = Math.floor(Math.random() * 135);
+		var y = Math.floor(Math.random() * 50);
+		var random = Math.floor(Math.random() * $('.mine').length);
+		var cell = $('#'+y+"-"+x);
+		if(cell.hasClass("stone"))
+		{
+			cell.removeClass("stone");
+			cell.addClass($($(".mine")[random]).attr('id'));
+			cell.attr('type', $($(".mine")[random]).attr('id'))
+			cell.attr("funct", "getOre();");
+		}
+		i++;
+	}while (i<250);	
+}
+
+function getOre()
+{
+	var cell = $('.me');
+	var type = cell.attr('type');
+	$('#'+type).text(eval($('#'+type).text())+1);
+	cell.removeClass(type);
+	cell.addClass("stone");
+	cell.removeAttr('type')
+	cell.removeAttr("funct", "getOre();");
 }
 
 function addWorld(worldType, doorTypeFrom, doorTypeTo, neededMoney)
@@ -462,6 +502,13 @@ function saveGame()
 	});
 	$.each(recipients, function( index, value ) {
 		var recipientId= value.type;
+		var recipient = {};
+		recipient.id=recipientId;
+		recipient.value=$('#'+recipientId).text();
+		saveFile.things.push(recipient);
+	});
+	$.each($('.mine'), function( index, value ) {
+		var recipientId= $(value).attr('id');
 		var recipient = {};
 		recipient.id=recipientId;
 		recipient.value=$('#'+recipientId).text();
