@@ -290,6 +290,50 @@
 	font-size: 50%;
 }
 
+.oildestilation
+{
+	background-color: brown;
+	color: white;
+}
+
+.oildestilation:not([recipient="none"])
+{
+	color: black;
+}
+
+.oildestilation[timeneeded="0"]:not([recipient="none"])
+{
+	color: red;
+}
+
+.oildestilation:after
+{
+	content: ".tt.";
+	font-size: 50%;
+}
+
+.injectionmolding
+{
+	background-color: grey;
+	color: white;
+}
+
+.injectionmolding:not([recipient="none"])
+{
+	color: black;
+}
+
+.injectionmolding[timeneeded="0"]:not([recipient="none"])
+{
+	color: red;
+}
+
+.injectionmolding:after
+{
+	content: "##";
+	font-size: 50%;
+}
+
 .watered {
 	background: linear-gradient(
 		to bottom,
@@ -380,6 +424,18 @@
 }
 
 .pump:after
+{
+	content: "|--|";
+	font-size: 50%;
+}
+
+.oilpump
+{
+	background-color: dimgrey;
+	color: silver;
+}
+
+.oilpump:after
 {
 	content: "|--|";
 	font-size: 50%;
