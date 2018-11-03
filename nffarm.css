@@ -189,6 +189,49 @@
 	);
 }
 
+.pig:after {
+	content: "::::";
+	font-size: 50%;
+}
+
+.pig {
+	color: black;
+	background-color: pink;
+}
+
+.pig[feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		pink 85%,
+		brown 15%
+	);
+}
+
+.pig[watered="true"] {
+	background: linear-gradient(
+		to bottom,
+		pink 85%,
+		blue 15%
+	);
+}
+
+.pig[watered="true"][feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		pink 50%,
+		blue,
+		brown
+	);
+}
+
+.pig[pregnant="0"][spendtime="0"] {
+	background: linear-gradient(
+		to bottom,
+		pink 85%,
+		orange 15%
+	);
+}
+
 .chicken:after {
 	content: "_o_";
 	font-size: 50%;
