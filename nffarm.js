@@ -21,7 +21,8 @@ var buildings = [{name: "field", type: "field", group: "farm", funct: "fieldDial
 				{name: "pump", type: "pump", group: "farm", funct: "pumpDialog();", initialAttributes: [{key: "water", value: 10}, {key: "oil", value: 10}]},
 				{name: "fillrobotor", type: "fillrobotor", group: "machineroom", funct: "fillrobotorDialog();", initialAttributes: []},
 				{name: "emptyrobotor", type: "emptyrobotor", group: "machineroom", funct: "emptyrobotorDialog();", initialAttributes: []},
-				{name: "oilpump", type: "oilpump", group: "farm", funct: "oilpumpDialog();", initialAttributes: [{key: "oil", value: 1}]}
+				{name: "oilpump", type: "oilpump", group: "farm", funct: "oilpumpDialog();", initialAttributes: [{key: "oil", value: 1}]},
+				{name: "trash", type: "trash", group: "farm", funct: "trashDialog();", initialAttributes: []}
 				];
 				
 var machines = [
@@ -413,6 +414,10 @@ function keydown(key)
 		{
 			loadGameDialog();
 		}
+		else if(code == 73)
+		{
+			$('#inventory').toggle();
+		}
 		else{
 			alert(code);
 		}
@@ -422,7 +427,7 @@ function keydown(key)
 
 function menu()
 {
-	addDialog({speaker: 'speaker-me', text: 'Das ist ein Men&uuml;! Was m&ouml;chtest du tun?', options: [{text: 'Speichern', funct: 'saveGame();'}, {text: 'Laden', funct: 'loadGameDialog();'}, {text: 'Hilfe', funct: 'showHelp();'}, {text: 'Nichts', funct: 'closeDialog()'}]});
+	addDialog({speaker: 'speaker-me', text: 'Das ist ein Men&uuml;! Was m&ouml;chtest du tun?', options: [{text: 'Speichern', funct: 'saveGame();'}, {text: 'Laden', funct: 'loadGameDialog();'}, {text: 'Hilfe', funct: 'showHelp();'}, {text: 'Inventar ein/ausblenden', funct: '$(\'#inventory\').toggle();'}, {text: 'Nichts', funct: 'closeDialog()'}]});
 }
 
 function showHelp()
@@ -1365,7 +1370,8 @@ function buildFarmDialog()
 		{text: '&Ouml;lpumpe (5000 Euro)', funct: 'buildBuilding(\'oilpump\', 5000);'},
 		{text: 'Erntemaschine (10000 Euro)', funct: 'buildBuilding(\'harvester\', 10000);'},
 		{text: 'Pflanzmaschine (10000 Euro)', funct: 'buildBuilding(\'planter\', 10000);'},
-		{text: 'Pumpe (10000 Euro)', funct: 'buildBuilding(\'pump\', 10000);'}
+		{text: 'Pumpe (10000 Euro)', funct: 'buildBuilding(\'pump\', 10000);'},
+		{text: 'M&uuml;lleimer (10 Euro)', funct: 'buildBuilding(\'trash\', 10);'}
 	];
 	var cell = $('.me');
 	var x = cell.attr('x');
@@ -1747,6 +1753,32 @@ function cleanWay()
 	{
 		addDialog({speaker: 'speaker-me', text: 'Der Weg ist wieder sauber, Ordnung muss ja auch sein!', options: [{text: 'OK', funct: 'closeDialog()'}]});
 	}
+}
+
+function trashDialog()
+{
+	var options = [];
+	$.each($('.plants'), function( index, value ) {
+		var plantId= $(value).attr('id');
+		var seeds = eval($('#'+plantId+'seed').text());
+		if(seeds >0)
+		{
+			var name = $(value).attr('name');
+			var option = {};
+			option.text=name;
+			option.funct="trash('"+plantId+"', '"+name+"');";
+			options.push(option);
+		}
+	});
+	options.push({text: 'Nichts', funct: 'closeDialog()'});
+	addDialog({speaker: 'speaker-me', text: 'Welche Samen soll ich entsorgen?', options: options});
+}
+
+function trash(type, name)
+{
+	var seeds = eval($('#'+type+'seed').text());
+	$('#'+type+'seed').text("0");
+	addDialog({speaker: 'speaker-me', text: 'Ich habe'+seeds+' '+name+' entsorgt!', options: [{text: 'OK', funct: 'trashDialog()'}]});
 }
 
 $( document ).ready(function() {

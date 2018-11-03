@@ -9,6 +9,11 @@
     white-space: nowrap;
 }
 
+#inventory{
+	background-color: saddlebrown;
+	color: white;
+}
+
 .black{
 	background: black !important;
 }
@@ -500,6 +505,18 @@
 .emptyrobotor:after
 {
 	content: "-O-";
+	font-size: 50%;
+}
+
+.trash
+{
+	background-color: black ;
+	color: silver;
+}
+
+.trash:after
+{
+	content: "|__|";
 	font-size: 50%;
 }
 
