@@ -27,6 +27,19 @@ var buildings = [{name: "field", type: "field", group: "farm", funct: "fieldDial
 				{name: "minerobotor", type: "minerobotor", group: "minehouse", funct: "mineRobotorDialog();", initialAttributes: []}
 				];
 				
+var templates = [
+				{name: "fieldtemplate", template: [
+					{x:-3, y:-3 , type: "field"}, {x:-3, y:-2 , type: "field"}, {x:-3, y:-1 , type: "field"}, {x:-3, y:0 , type: "field"}, {x:-3, y:1 , type: "field"}, {x:-3, y:2 , type: "field"}, {x:-3, y:3 , type: "field"},
+					{x:-2, y:-3 , type: "field"}, {x:-2, y:-2 , type: "field"}, {x:-2, y:-1 , type: "field"}, {x:-2, y:0 , type: "field"}, {x:-2, y:1 , type: "field"}, {x:-2, y:2 , type: "field"}, {x:-2, y:3 , type: "field"},
+					{x:-1, y:-3 , type: "field"}, {x:-1, y:-2 , type: "field"}, {x:-1, y:-1 , type: "field"}, {x:-1, y:0 , type: "field"}, {x:-1, y:1 , type: "field"}, {x:-1, y:2 , type: "field"}, {x:-1, y:3 , type: "field"},
+					{x:0, y:-3 , type: "field"}, {x:0, y:-2 , type: "field"}, {x:0, y:-1 , type: "field"}, {x:0, y:0 , type: "sprinkler"}, {x:0, y:1 , type: "field"}, {x:0, y:2 , type: "field"}, {x:0, y:3 , type: "field"},
+					{x:1, y:-3 , type: "field"}, {x:1, y:-2 , type: "field"}, {x:1, y:-1 , type: "field"}, {x:1, y:0 , type: "field"}, {x:1, y:1 , type: "field"}, {x:1, y:2 , type: "field"}, {x:1, y:3 , type: "field"},
+					{x:2, y:-3 , type: "field"}, {x:2, y:-2 , type: "field"}, {x:2, y:-1 , type: "field"}, {x:2, y:0 , type: "field"}, {x:2, y:1 , type: "field"}, {x:2, y:2 , type: "field"}, {x:2, y:3 , type: "field"},
+					{x:3, y:-3 , type: "field"}, {x:3, y:-2 , type: "field"}, {x:3, y:-1 , type: "field"}, {x:3, y:0 , type: "field"}, {x:3, y:1 , type: "field"}, {x:3, y:2 , type: "field"}, {x:3, y:3 , type: "field"}
+					]
+				}
+];
+				
 var machines = [
 	{name: "Ofen", type: "oven", price: 10000},
 	{name: "K&auml;sepresse", type: "cheesepress", price: 15000},
@@ -289,35 +302,40 @@ function enterMap(oldMap, newMap)
 {
 	$('.loader').show();
 	setTimeout(function() {
-		var newWorld = getWorld(newMap);
-		generateWorld(newWorld);
-		var found = false;
-		$.each(newWorld.ends, function( index, value ) {
-			if(value.to == oldMap)
-			{
-				var cell = $('#'+value.y+"-"+value.x);
-				cell.addClass('me');
-				found = true;
-			}
-		});
-		if(!found)
-		{
-			$.each(buildedBuildings, function( index, value ) {
-				if(value.map == newMap)
-				{
-					$.each(value.attributes, function( index, attribute ) {
-						if(attribute.key == 'to' && attribute.value == oldMap)
-						{
-							var cell = $('#'+value.y+"-"+value.x);
-							cell.addClass('me');
-							found = true;
-						}
-					});
-				}
-			});
-		}
+		enterMapWithoutLoading(oldMap, newMap);
 		$('.loader').hide();
 	}, 1);
+}
+
+function enterMapWithoutLoading(oldMap, newMap)
+{
+	var newWorld = getWorld(newMap);
+	generateWorld(newWorld);
+	var found = false;
+	$.each(newWorld.ends, function( index, value ) {
+		if(value.to == oldMap)
+		{
+			var cell = $('#'+value.y+"-"+value.x);
+			cell.addClass('me');
+			found = true;
+		}
+	});
+	if(!found)
+	{
+		$.each(buildedBuildings, function( index, value ) {
+			if(value.map == newMap)
+			{
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'to' && attribute.value == oldMap)
+					{
+						var cell = $('#'+value.y+"-"+value.x);
+						cell.addClass('me');
+						found = true;
+					}
+				});
+			}
+		});
+	}
 }
 
 function enterMapDynamic()
@@ -1042,7 +1060,7 @@ function getTenMineFloors()
 			var cell = $('.me');
 			var newMap = 'mine';
 			var oldMap = $('#world').attr("name");
-			enterMap(oldMap, newMap);
+			enterMapWithoutLoading(oldMap, newMap);
 			$.each($("[funct^='getOre']"), function( i, value ) {
 				var me = $(".me");
 				$(value).addClass('me');
@@ -1051,7 +1069,7 @@ function getTenMineFloors()
 			});
 			i++;
 		}while(i<10)
-		enterMap('mine', 'minehouse');
+		enterMapWithoutLoading('mine', 'minehouse');
 		$('.loader').hide();
 	}, 1);
 }
@@ -1417,7 +1435,8 @@ function buildFarmDialog()
 		{text: 'Erntemaschine (10000 Euro)', funct: 'buildBuilding(\'harvester\', 10000);'},
 		{text: 'Pflanzmaschine (10000 Euro)', funct: 'buildBuilding(\'planter\', 10000);'},
 		{text: 'Pumpe (10000 Euro)', funct: 'buildBuilding(\'pump\', 10000);'},
-		{text: 'M&uuml;lleimer (10 Euro)', funct: 'buildBuilding(\'trash\', 10);'}
+		{text: 'M&uuml;lleimer (10 Euro)', funct: 'buildBuilding(\'trash\', 10);'},
+		{text: 'Felder mit Sprinkler (6000 Euro)', funct: 'buildTemplate(\'fieldtemplate\', 6000, \'green\');'}
 	];
 	var cell = $('.me');
 	var x = cell.attr('x');
@@ -1456,6 +1475,49 @@ function planterDialog()
 	options.push({text: 'Nichts', funct: 'closeDialog()'});
 	options.push({text: 'Abrei&szlig;en', funct: 'destroyBuilding()'});
 	addDialog({speaker: 'speaker-me', text: 'Was soll ich auf den freien Felder pflanzen?', options: options});
+}
+
+function buildTemplate(name, neededMoney, neededClass)
+{
+	var cell = $('.me');
+	var x = eval(cell.attr('x'));
+	var y = eval(cell.attr('y'));
+	var template = undefined;
+	$.each(templates, function( index, temp ) {
+		if(temp.name == name)
+		{
+			template=temp;
+		}
+	});
+	var checkClass = true;
+	$.each(template.template, function( index, templateCell ) {
+		if($('#'+(y+templateCell.y)+"-"+(x+templateCell.x)).length == 0 || !$('#'+(y+templateCell.y)+"-"+(x+templateCell.x)).hasClass(neededClass))
+		{
+			checkClass = false;
+		}
+	});
+	if(checkClass)
+	{
+		if(getMoney()>=neededMoney)
+		{
+			addMoney(neededMoney*-1);
+			cell.removeClass('me');
+			$.each(template.template, function( index, templateCell ) {
+				$('#'+(y+templateCell.y)+"-"+(x+templateCell.x)).addClass('me');
+				buildBuilding(templateCell.type, 0);
+				$('#'+(y+templateCell.y)+"-"+(x+templateCell.x)).removeClass('me');
+			});
+			cell.addClass('me');
+		}
+		else
+		{
+			addDialog({speaker: 'speaker-me', text: 'Vielleicht sollten wir erst mal wieder Geld verdienen, ich kann nat&uuml;rlich auch mal schauen ob jemand Geld auf dem Weg verloren hat!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+		}
+	}
+	else
+	{
+		addDialog({speaker: 'speaker-me', text: 'Hier ist kein Platz, ich sollte einen anderen Platz w&auml;hlen!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+	}
 }
 
 function buildBuilding(name, neededMoney)
