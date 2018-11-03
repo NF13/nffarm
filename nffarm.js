@@ -1,6 +1,7 @@
 var home = {name: "home", x:5, y:5, type: "floor", elements:[{x:0,y:0,type:"computer", funct:"useComputer();"}, {x:0,y:3,type:"bed", funct:"bedDialog();"}], ends: [{x:3, y:4, to: "farm", type:"door"}]}
 var farm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[{x:10, y:10, to: "home", type: "home"}, {x:2, y:0, to: "mine", type: "gate"}]}
-var mine = {name: "mine", x:135, y:50, type: "stone", elements:[], ends:[{x:65, y:49, to: "farm", type: "hole"}, {x:65, y:25, to: "mine", type: "hole"}], afterGenerate: "generateMining()"}
+var mine = {name: "mine", x:135, y:50, type: "stone", elements:[], ends:[{x:65, y:49, to: "farm", type: "hole"}, {x:65, y:25, to: "mine", type: "hole"}, {x:67, y:47, to: "minehouse", type: "minehouse"}], afterGenerate: "generateMining()"}
+var minehouse = {name: "minehouse", funct: "buildMineHouseDialog();", x:10, y:10, type: "floor", elements:[], ends: [{x:3, y:9, to: "mine", type:"door"}]}
 var emptyFarm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[]}
 var emptyStable = {name: "stable", funct: "buildStableDialog();", x:40, y:40, type: "floor", elements:[], ends:[], initialEnd:{x:20, y:39}}
 var emptyMachineroom = {name: "machineroom", funct: "buildMachineDialog();", x:40, y:40, type: "floor", elements:[], ends:[], initialEnd:{x:20, y:39}}
@@ -22,7 +23,8 @@ var buildings = [{name: "field", type: "field", group: "farm", funct: "fieldDial
 				{name: "fillrobotor", type: "fillrobotor", group: "machineroom", funct: "fillrobotorDialog();", initialAttributes: []},
 				{name: "emptyrobotor", type: "emptyrobotor", group: "machineroom", funct: "emptyrobotorDialog();", initialAttributes: []},
 				{name: "oilpump", type: "oilpump", group: "farm", funct: "oilpumpDialog();", initialAttributes: [{key: "oil", value: 1}]},
-				{name: "trash", type: "trash", group: "farm", funct: "trashDialog();", initialAttributes: []}
+				{name: "trash", type: "trash", group: "farm", funct: "trashDialog();", initialAttributes: []},
+				{name: "minerobotor", type: "minerobotor", group: "minehouse", funct: "mineRobotorDialog();", initialAttributes: []}
 				];
 				
 var machines = [
@@ -286,34 +288,36 @@ function getWorld(worldName)
 function enterMap(oldMap, newMap)
 {
 	$('.loader').show();
-	var newWorld = getWorld(newMap);
-	generateWorld(newWorld);
-	var found = false;
-	$.each(newWorld.ends, function( index, value ) {
-		if(value.to == oldMap)
-		{
-			var cell = $('#'+value.y+"-"+value.x);
-			cell.addClass('me');
-			found = true;
-		}
-	});
-	if(!found)
-	{
-		$.each(buildedBuildings, function( index, value ) {
-			if(value.map == newMap)
+	setTimeout(function() {
+		var newWorld = getWorld(newMap);
+		generateWorld(newWorld);
+		var found = false;
+		$.each(newWorld.ends, function( index, value ) {
+			if(value.to == oldMap)
 			{
-				$.each(value.attributes, function( index, attribute ) {
-					if(attribute.key == 'to' && attribute.value == oldMap)
-					{
-						var cell = $('#'+value.y+"-"+value.x);
-						cell.addClass('me');
-						found = true;
-					}
-				});
+				var cell = $('#'+value.y+"-"+value.x);
+				cell.addClass('me');
+				found = true;
 			}
 		});
-	}
-	$('.loader').hide();
+		if(!found)
+		{
+			$.each(buildedBuildings, function( index, value ) {
+				if(value.map == newMap)
+				{
+					$.each(value.attributes, function( index, attribute ) {
+						if(attribute.key == 'to' && attribute.value == oldMap)
+						{
+							var cell = $('#'+value.y+"-"+value.x);
+							cell.addClass('me');
+							found = true;
+						}
+					});
+				}
+			});
+		}
+		$('.loader').hide();
+	}, 1);
 }
 
 function enterMapDynamic()
@@ -444,88 +448,91 @@ function loadGameDialog()
 function loadGame()
 {
 	$('.loader').show();
-	try
-	{
-		var saveFile = JSON.parse($('#saveFile').val());
-		emails = saveFile.emails;
-		buildedBuildings = saveFile.buildedBuildings;
-		plantedFields = saveFile.plantedFields;
-		addedWorlds = saveFile.addedWorlds;
-		$('#money').text(saveFile.money);
-		$.each(saveFile.things, function( index, value ) {
-			$('#'+value.id).text(value.value);
-		});
-		$.each(saveFile.seeds, function( index, value ) {
-			$('#'+value.id+'seed').text(value.value);
-		});
-		$('#water').text(saveFile.water);
-		$('#oil').text(saveFile.oil);
-		generateWorld(getWorld(saveFile.map));
-		var cell = $('#'+saveFile.y+"-"+saveFile.x);
-		cell.addClass('me');
-		closeDialog();
-	}
-	catch(e)
-	{
-		addDialog({speaker: 'speaker-me', text: 'Dein SaveGame ist anscheinend veraltet und kann nicht mehr importiert werden.', options: [{text: 'OK', funct: 'closeDialog()'}]});
-	}
-	$('.loader').hide();
-	
+	setTimeout(function() {
+		try
+		{
+			var saveFile = JSON.parse($('#saveFile').val());
+			emails = saveFile.emails;
+			buildedBuildings = saveFile.buildedBuildings;
+			plantedFields = saveFile.plantedFields;
+			addedWorlds = saveFile.addedWorlds;
+			$('#money').text(saveFile.money);
+			$.each(saveFile.things, function( index, value ) {
+				$('#'+value.id).text(value.value);
+			});
+			$.each(saveFile.seeds, function( index, value ) {
+				$('#'+value.id+'seed').text(value.value);
+			});
+			$('#water').text(saveFile.water);
+			$('#oil').text(saveFile.oil);
+			generateWorld(getWorld(saveFile.map));
+			var cell = $('#'+saveFile.y+"-"+saveFile.x);
+			cell.addClass('me');
+			closeDialog();
+		}
+		catch(e)
+		{
+			addDialog({speaker: 'speaker-me', text: 'Dein SaveGame ist anscheinend veraltet und kann nicht mehr importiert werden.', options: [{text: 'OK', funct: 'closeDialog()'}]});
+		}
+		$('.loader').hide();
+	}, 1);
 }
 
 function saveGame()
 {
 	$('.loader').show();
-	var saveFile = {};
-	saveFile.map = $('#world').attr("name");
-	saveFile.x = $('.me').attr("x");
-	saveFile.y = $('.me').attr("y");
-	saveFile.emails = emails;
-	saveFile.buildedBuildings = buildedBuildings;
-	saveFile.plantedFields = plantedFields;
-	saveFile.addedWorlds = addedWorlds;
-	saveFile.money = $('#money').text();
-	saveFile.things=[];
-	saveFile.seeds=[];
-	$.each($('.plants'), function( index, value ) {
-		var plantId= $(value).attr('id');
-		var plant = {};
-		plant.id=plantId;
-		plant.value=$('#'+plantId).text();
-		saveFile.things.push(plant);
-		var seed = {};
-		seed.id=plantId;
-		seed.value=$('#'+plantId+'seed').text();
-		saveFile.seeds.push(seed);
-	});
-	$.each($('.animal'), function( index, value ) {
-		var animalId= $(value).attr('id');
-		var animal = {};
-		animal.id=animalId;
-		animal.value=$('#'+animalId).text();
-		saveFile.things.push(animal);
-	});
-	$.each(recipients, function( index, value ) {
-		var recipientId= value.type;
-		var recipient = {};
-		recipient.id=recipientId;
-		recipient.value=$('#'+recipientId).text();
-		saveFile.things.push(recipient);
-	});
-	$.each($('.mine'), function( index, value ) {
-		var recipientId= $(value).attr('id');
-		var recipient = {};
-		recipient.id=recipientId;
-		recipient.value=$('#'+recipientId).text();
-		saveFile.things.push(recipient);
-	});
-	saveFile.water = $('#water').text();
-	saveFile.oil = $('#oil').text();
-	addDialog({speaker: 'speaker-me', text: 'Das ist dein Code, bitte kopieren und speichern: <input type="text"  id="saveFile"/>', options: [{text: 'Erledigt', funct: 'closeDialog()'}]});
-	$('#saveFile').val(JSON.stringify(saveFile));
-	$('#saveFile').select();
-	document.execCommand('copy');
-	$('.loader').hide();
+	setTimeout(function() {
+		var saveFile = {};
+		saveFile.map = $('#world').attr("name");
+		saveFile.x = $('.me').attr("x");
+		saveFile.y = $('.me').attr("y");
+		saveFile.emails = emails;
+		saveFile.buildedBuildings = buildedBuildings;
+		saveFile.plantedFields = plantedFields;
+		saveFile.addedWorlds = addedWorlds;
+		saveFile.money = $('#money').text();
+		saveFile.things=[];
+		saveFile.seeds=[];
+		$.each($('.plants'), function( index, value ) {
+			var plantId= $(value).attr('id');
+			var plant = {};
+			plant.id=plantId;
+			plant.value=$('#'+plantId).text();
+			saveFile.things.push(plant);
+			var seed = {};
+			seed.id=plantId;
+			seed.value=$('#'+plantId+'seed').text();
+			saveFile.seeds.push(seed);
+		});
+		$.each($('.animal'), function( index, value ) {
+			var animalId= $(value).attr('id');
+			var animal = {};
+			animal.id=animalId;
+			animal.value=$('#'+animalId).text();
+			saveFile.things.push(animal);
+		});
+		$.each(recipients, function( index, value ) {
+			var recipientId= value.type;
+			var recipient = {};
+			recipient.id=recipientId;
+			recipient.value=$('#'+recipientId).text();
+			saveFile.things.push(recipient);
+		});
+		$.each($('.mine'), function( index, value ) {
+			var recipientId= $(value).attr('id');
+			var recipient = {};
+			recipient.id=recipientId;
+			recipient.value=$('#'+recipientId).text();
+			saveFile.things.push(recipient);
+		});
+		saveFile.water = $('#water').text();
+		saveFile.oil = $('#oil').text();
+		addDialog({speaker: 'speaker-me', text: 'Das ist dein Code, bitte kopieren und speichern: <input type="text"  id="saveFile"/>', options: [{text: 'Erledigt', funct: 'closeDialog()'}]});
+		$('#saveFile').val(JSON.stringify(saveFile));
+		$('#saveFile').select();
+		document.execCommand('copy');
+		$('.loader').hide();
+	}, 1);
 }
 
 function moveToAndExec(x, y)
@@ -629,214 +636,216 @@ function sleep()
 	setTimeout(function() {
         $("#world td").removeClass("black", 1000);
     }, 1000 );
-	$.each(buildedBuildings, function( index, value ) {
-		if(value.name == 'fountain')
-		{
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'water')
-				{
-					attribute.value = 10;
-				}
-			});
-		}
-		else if(value.name == 'oilpump')
-		{
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'oil')
-				{
-					attribute.value = attribute.value + 1;
-				}
-			});
-		}
-		else if(value.group == "animal")
-		{
-			var feeded = false;
-			var watered = false;
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'feeded')
-				{
-					feeded = attribute.value;
-					attribute.value = false;
-				}
-				else if(attribute.key == 'watered')
-				{
-					watered = attribute.value;
-					attribute.value = false;
-				}
-			});
-			if(feeded && watered)
+	setTimeout(function() {
+		$.each(buildedBuildings, function( index, value ) {
+			if(value.name == 'fountain')
 			{
 				$.each(value.attributes, function( index, attribute ) {
-					if(attribute.key == 'pregnant' && attribute.value > 0)
+					if(attribute.key == 'water')
 					{
-						attribute.value = attribute.value - 1;
+						attribute.value = 10;
 					}
-					else if(attribute.key == 'spendtime' && attribute.value > 0)
+				});
+			}
+			else if(value.name == 'oilpump')
+			{
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'oil')
+					{
+						attribute.value = attribute.value + 1;
+					}
+				});
+			}
+			else if(value.group == "animal")
+			{
+				var feeded = false;
+				var watered = false;
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'feeded')
+					{
+						feeded = attribute.value;
+						attribute.value = false;
+					}
+					else if(attribute.key == 'watered')
+					{
+						watered = attribute.value;
+						attribute.value = false;
+					}
+				});
+				if(feeded && watered)
+				{
+					$.each(value.attributes, function( index, attribute ) {
+						if(attribute.key == 'pregnant' && attribute.value > 0)
+						{
+							attribute.value = attribute.value - 1;
+						}
+						else if(attribute.key == 'spendtime' && attribute.value > 0)
+						{
+							attribute.value = attribute.value - 1;
+						}
+					});
+				}
+			}
+			else if(value.group == "machine")
+			{
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'timeneeded' && attribute.value > 0)
 					{
 						attribute.value = attribute.value - 1;
 					}
 				});
 			}
-		}
-		else if(value.group == "machine")
-		{
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'timeneeded' && attribute.value > 0)
-				{
-					attribute.value = attribute.value - 1;
-				}
-			});
-		}
-	});
-	$.each(plantedFields, function( index, value ) {
-		if(value.step > 0 && value.watered)
-		{
-			value.watered = false;
-			value.step = value.step - 1;
-		}
-	});
-	$.each(buildedBuildings, function( index, value ) {
-		if(value.name == 'sprinkler')
-		{
-			var x = eval(value.x);
-			var y = eval(value.y);
-			var map = value.map;
-			useSprinkler(x, y, map);
-		}
-		else if(value.name == 'feedingtrough')
-		{
-			var fill = 0;
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'fill')
-				{
-					fill = attribute.value;
-				}
-			});
-			$.each(buildedBuildings, function( index, animal ) {
-				if(animal.group == "animal" && animal.map == value.map && fill > 0)
-				{
-					$.each(animal.attributes, function( index, attribute ) {
-						if(attribute.key == 'feeded' && !attribute.value)
-						{
-							attribute.value = true;
-							fill = fill - 1;
-						}
-					});
-				}
-			});
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'fill')
-				{
-					attribute.value = fill;
-				}
-			});
-		}
-		else if(value.name == 'watertrough')
-		{
-			var fill = 0;
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'fill')
-				{
-					fill = attribute.value;
-				}
-			});
-			$.each(buildedBuildings, function( index, animal ) {
-				if(animal.group == "animal" && animal.map == value.map && fill > 0)
-				{
-					$.each(animal.attributes, function( index, attribute ) {
-						if(attribute.key == 'watered' && !attribute.value)
-						{
-							attribute.value = true;
-							fill = fill - 1;
-						}
-					});
-				}
-			});
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'fill')
-				{
-					attribute.value = fill;
-				}
-			});
-		}
-		else if(value.name == 'eiwollmilchsau')
-		{
-			var things;
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'things')
-				{
-					things = attribute.value;
-				}
-			});
-			$.each(buildedBuildings, function( index, animal ) {
-				if(animal.group == "animal" && animal.map == value.map)
-				{
-					var ok = true;
-					$.each(animal.attributes, function( index, attribute ) {
-						if(attribute.key == 'pregnant' && attribute.value > 0)
-						{
-							ok = false;
-						}
-						else if(attribute.key == 'spendtime' && attribute.value > 0)
-						{
-							ok = false;
-						}
-					});
-					if(ok)
+		});
+		$.each(plantedFields, function( index, value ) {
+			if(value.step > 0 && value.watered)
+			{
+				value.watered = false;
+				value.step = value.step - 1;
+			}
+		});
+		$.each(buildedBuildings, function( index, value ) {
+			if(value.name == 'sprinkler')
+			{
+				var x = eval(value.x);
+				var y = eval(value.y);
+				var map = value.map;
+				useSprinkler(x, y, map);
+			}
+			else if(value.name == 'feedingtrough')
+			{
+				var fill = 0;
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'fill')
+					{
+						fill = attribute.value;
+					}
+				});
+				$.each(buildedBuildings, function( index, animal ) {
+					if(animal.group == "animal" && animal.map == value.map && fill > 0)
 					{
 						$.each(animal.attributes, function( index, attribute ) {
-							if(attribute.key == 'spendtime')
+							if(attribute.key == 'feeded' && !attribute.value)
 							{
-								attribute.value = eval($('#'+animal.name).attr('spendtime'));
+								attribute.value = true;
+								fill = fill - 1;
 							}
 						});
-						things.push(animal.name);
 					}
-				}
-			});
-		}
-		else if(value.name == 'pump')
-		{
-			var addedWater = 0;
-			$.each(buildedBuildings, function( index, fountain ) {
-				if(fountain.name == 'fountain' && fountain.map == value.map)
-				{
-					$.each(fountain.attributes, function( index, attribute ) {
-						if(attribute.key == 'water')
+				});
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'fill')
+					{
+						attribute.value = fill;
+					}
+				});
+			}
+			else if(value.name == 'watertrough')
+			{
+				var fill = 0;
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'fill')
+					{
+						fill = attribute.value;
+					}
+				});
+				$.each(buildedBuildings, function( index, animal ) {
+					if(animal.group == "animal" && animal.map == value.map && fill > 0)
+					{
+						$.each(animal.attributes, function( index, attribute ) {
+							if(attribute.key == 'watered' && !attribute.value)
+							{
+								attribute.value = true;
+								fill = fill - 1;
+							}
+						});
+					}
+				});
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'fill')
+					{
+						attribute.value = fill;
+					}
+				});
+			}
+			else if(value.name == 'eiwollmilchsau')
+			{
+				var things;
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'things')
+					{
+						things = attribute.value;
+					}
+				});
+				$.each(buildedBuildings, function( index, animal ) {
+					if(animal.group == "animal" && animal.map == value.map)
+					{
+						var ok = true;
+						$.each(animal.attributes, function( index, attribute ) {
+							if(attribute.key == 'pregnant' && attribute.value > 0)
+							{
+								ok = false;
+							}
+							else if(attribute.key == 'spendtime' && attribute.value > 0)
+							{
+								ok = false;
+							}
+						});
+						if(ok)
 						{
-							addedWater = addedWater + attribute.value;
-							attribute.value = 0;
+							$.each(animal.attributes, function( index, attribute ) {
+								if(attribute.key == 'spendtime')
+								{
+									attribute.value = eval($('#'+animal.name).attr('spendtime'));
+								}
+							});
+							things.push(animal.name);
 						}
-					});
-				}
-			});
-			var addedOil = 0;
-			$.each(buildedBuildings, function( index, fountain ) {
-				if(fountain.name == 'oilpump' && fountain.map == value.map)
-				{
-					$.each(fountain.attributes, function( index, attribute ) {
-						if(attribute.key == 'oil')
-						{
-							addedOil = addedOil + attribute.value;
-							attribute.value = 0;
-						}
-					});
-				}
-			});
-			$.each(value.attributes, function( index, attribute ) {
-				if(attribute.key == 'water')
-				{
-					attribute.value = attribute.value + addedWater;
-				}
-				else if(attribute.key == 'oil')
-				{
-					attribute.value = attribute.value + addedOil;
-				}
-			});
-		}
-	});
-	$('.loader').hide();
-	addDialog({speaker: 'speaker-me', text: 'G&auml;&auml;hhnn, genug geschlafen ran an die Arbeit!', options: [{text: 'Arbeit, Arbeit', funct: 'closeDialog()'}]});
+					}
+				});
+			}
+			else if(value.name == 'pump')
+			{
+				var addedWater = 0;
+				$.each(buildedBuildings, function( index, fountain ) {
+					if(fountain.name == 'fountain' && fountain.map == value.map)
+					{
+						$.each(fountain.attributes, function( index, attribute ) {
+							if(attribute.key == 'water')
+							{
+								addedWater = addedWater + attribute.value;
+								attribute.value = 0;
+							}
+						});
+					}
+				});
+				var addedOil = 0;
+				$.each(buildedBuildings, function( index, fountain ) {
+					if(fountain.name == 'oilpump' && fountain.map == value.map)
+					{
+						$.each(fountain.attributes, function( index, attribute ) {
+							if(attribute.key == 'oil')
+							{
+								addedOil = addedOil + attribute.value;
+								attribute.value = 0;
+							}
+						});
+					}
+				});
+				$.each(value.attributes, function( index, attribute ) {
+					if(attribute.key == 'water')
+					{
+						attribute.value = attribute.value + addedWater;
+					}
+					else if(attribute.key == 'oil')
+					{
+						attribute.value = attribute.value + addedOil;
+					}
+				});
+			}
+		});
+		$('.loader').hide();
+		addDialog({speaker: 'speaker-me', text: 'G&auml;&auml;hhnn, genug geschlafen ran an die Arbeit!', options: [{text: 'Arbeit, Arbeit', funct: 'closeDialog()'}]});
+	}, 1);
 }
 
 function useSprinkler(x, y, map)
@@ -977,6 +986,14 @@ function buildMachineDialog()
 	addDialog({speaker: 'speaker-me', text: 'Welche Machine soll ich anschaffen?', options: options});
 }
 
+function buildMineHouseDialog()
+{
+	var options = [];
+	options.push({text: 'Bergbaurobotor (25000 Euro)', funct: 'buildBuilding(\'minerobotor\', 25000);'});
+	options.push({text: 'Nichts', funct: 'closeDialog()'});	
+	addDialog({speaker: 'speaker-me', text: 'Was soll ich kaufen?', options: options});
+}
+
 function machineDialog()
 {
 	var cell = $('.me');
@@ -1008,6 +1025,35 @@ function machineDialog()
 	{
 		addDialog({speaker: 'speaker-me', text: 'Das Rezept '+$('#'+cell.attr('recipient')).attr('name')+' ben&ouml;tigt noch '+cell.attr('timeneeded')+ ' Tage', options: [{text: 'OK', funct: 'closeDialog()'}, {text: 'Maschine vernichten', funct: 'destroyBuilding()'}]});
 	}
+}
+
+function mineRobotorDialog()
+{
+	addDialog({speaker: 'speaker-me', text: 'Soll ich mit der Machine 10 Minensch&auml;chte abarbeiten?', options: [{text: 'Ja', funct: 'getTenMineFloors()'}, {text: 'Nein', funct: 'closeDialog()'}, {text: 'Robotor vernichten', funct: 'destroyBuilding()'}]});
+}
+
+function getTenMineFloors()
+{
+	$('.loader').show();
+	setTimeout(function() {
+		var i = 0;
+		do
+		{
+			var cell = $('.me');
+			var newMap = 'mine';
+			var oldMap = $('#world').attr("name");
+			enterMap(oldMap, newMap);
+			$.each($("[funct^='getOre']"), function( i, value ) {
+				var me = $(".me");
+				$(value).addClass('me');
+				me.removeClass('me');
+				getOre();
+			});
+			i++;
+		}while(i<10)
+		enterMap('mine', 'minehouse');
+		$('.loader').hide();
+	}, 1);
 }
 
 function emptyrobotorDialog()
@@ -1525,16 +1571,20 @@ function waterField()
 
 function harvestAllFields()
 {
-	var startCell = $(".me");
-	$.each($('.field[step="0"]'), function( i, value ) {
-		var me = $(".me");
-		$(value).addClass('me');
-		me.removeClass('me');
-		harvestField();
-	});
-	$(".me").removeClass('me');
-	startCell.addClass('me');
-	addDialog({speaker: 'speaker-me', text: 'Alles erledigt!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+	$('.loader').show();
+	setTimeout(function() {
+		var startCell = $(".me");
+		$.each($('.field[step="0"]'), function( i, value ) {
+			var me = $(".me");
+			$(value).addClass('me');
+			me.removeClass('me');
+			harvestField();
+		});
+		$(".me").removeClass('me');
+		startCell.addClass('me');
+		addDialog({speaker: 'speaker-me', text: 'Alles erledigt!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+		$('.loader').hide();
+	}, 1);
 }
 
 function harvestField()
@@ -1590,20 +1640,24 @@ function plantFieldDialog()
 
 function plantAllFields(type, name, step)
 {
-	var startCell = $(".me");
-	$.each($('.field'), function( i, value ) {
-		var seeds = eval($('#'+type+'seed').text());
-		if(seeds > 0 && !$(value).attr('fieldType'))
-		{
-			var me = $(".me");
-			$(value).addClass('me');
-			me.removeClass('me');
-			plantField(type, name, step);
-		}
-	});
-	$(".me").removeClass('me');
-	startCell.addClass('me');
-	addDialog({speaker: 'speaker-me', text: 'Alles erledigt!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+	$('.loader').show();
+	setTimeout(function() {
+		var startCell = $(".me");
+		$.each($('.field'), function( i, value ) {
+			var seeds = eval($('#'+type+'seed').text());
+			if(seeds > 0 && !$(value).attr('fieldType'))
+			{
+				var me = $(".me");
+				$(value).addClass('me');
+				me.removeClass('me');
+				plantField(type, name, step);
+			}
+		});
+		$(".me").removeClass('me');
+		startCell.addClass('me');
+		addDialog({speaker: 'speaker-me', text: 'Alles erledigt!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+		$('.loader').hide();
+	}, 1);
 }
 
 function plantField(type, name, step)

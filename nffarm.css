@@ -77,6 +77,10 @@
 	background-color: brown;
 }
 
+.minehouse {
+	background-color: saddlebrown;
+}
+
 .field {
 	background-color: yellow;
 }
@@ -503,6 +507,18 @@
 }
 
 .emptyrobotor:after
+{
+	content: "-O-";
+	font-size: 50%;
+}
+
+.minerobotor
+{
+	background-color: lightslategrey ;
+	color: black;
+}
+
+.minerobotor:after
 {
 	content: "-O-";
 	font-size: 50%;
