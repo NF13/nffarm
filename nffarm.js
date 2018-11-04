@@ -1,7 +1,9 @@
 var home = {name: "home", x:5, y:5, type: "floor", elements:[{x:0,y:0,type:"computer", funct:"useComputer();"}, {x:0,y:3,type:"bed", funct:"bedDialog();"}], ends: [{x:3, y:4, to: "farm", type:"door"}]}
-var farm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[{x:10, y:10, to: "home", type: "home"}, {x:2, y:0, to: "mine", type: "gate"}]}
+var farm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[{x:10, y:10, to: "home", type: "home"}, {x:2, y:0, to: "mine", type: "gate"}, {x:4, y:0, to: "wood", type: "gate"}]}
 var mine = {name: "mine", x:135, y:50, type: "stone", elements:[], ends:[{x:65, y:49, to: "farm", type: "hole"}, {x:65, y:25, to: "mine", type: "hole"}, {x:67, y:47, to: "minehouse", type: "minehouse"}], afterGenerate: "generateMining()"}
+var wood = {name: "wood", x:135, y:50, type: "green", elements:[], ends:[{x:65, y:49, to: "farm", type: "gate"}, {x:65, y:25, to: "wood", type: "gate"}, {x:67, y:47, to: "woodhouse", type: "woodhouse"}], afterGenerate: "generateWood()"}
 var minehouse = {name: "minehouse", funct: "buildMineHouseDialog();", x:10, y:10, type: "floor", elements:[], ends: [{x:3, y:9, to: "mine", type:"door"}]}
+var woodhouse = {name: "woodhouse", funct: "buildWoodHouseDialog();", x:10, y:10, type: "floor", elements:[], ends: [{x:3, y:9, to: "wood", type:"door"}]}
 var emptyFarm = {name: "farm", funct: "buildFarmDialog();", x:135, y:50, type: "green", elements:[], ends:[]}
 var emptyStable = {name: "stable", funct: "buildStableDialog();", x:40, y:40, type: "floor", elements:[], ends:[], initialEnd:{x:20, y:39}}
 var emptyMachineroom = {name: "machineroom", funct: "buildMachineDialog();", x:40, y:40, type: "floor", elements:[], ends:[], initialEnd:{x:20, y:39}}
@@ -24,7 +26,8 @@ var buildings = [{name: "field", type: "field", group: "farm", funct: "fieldDial
 				{name: "emptyrobotor", type: "emptyrobotor", group: "machineroom", funct: "emptyrobotorDialog();", initialAttributes: []},
 				{name: "oilpump", type: "oilpump", group: "farm", funct: "oilpumpDialog();", initialAttributes: [{key: "oil", value: 1}]},
 				{name: "trash", type: "trash", group: "farm", funct: "trashDialog();", initialAttributes: []},
-				{name: "minerobotor", type: "minerobotor", group: "minehouse", funct: "mineRobotorDialog();", initialAttributes: []}
+				{name: "minerobotor", type: "minerobotor", group: "minehouse", funct: "mineRobotorDialog();", initialAttributes: []},
+				{name: "woodrobotor", type: "woodrobotor", group: "woodhouse", funct: "woodRobotorDialog();", initialAttributes: []}
 				];
 				
 var templates = [
@@ -46,7 +49,8 @@ var machines = [
 	{name: "&Ouml;ldestilator", type: "oildestilation", price: 15000},
 	{name: "Spritzgussmaschine", type: "injectionmolding", price: 15000},
 	{name: "Schmelzofen", type: "furnace", price: 15000},
-	{name: "Konzervierung", type: "conserver", price: 15000}
+	{name: "Konzervierung", type: "conserver", price: 15000},
+	{name: "Werkbank", type: "tooltable", price: 15000}
 ];
 
 var recipients = [
@@ -62,7 +66,10 @@ var recipients = [
 	{name: "Bohnenkonserven", type: "beanconserv", machine: "conserver", time: 1, sell: 100, ingredients: [{type: "bean", count: 1}, {type: "water", count: 1}]},
 	{name: "Zucker", type: "sugar", machine: "oven", time: 1, sell: 160, ingredients: [{type: "beet", count: 2}]},
 	{name: "Erdbeerkonfit&uuml;re", type: "strawberrymarmelade", machine: "oven", time: 1, sell: 300, ingredients: [{type: "sugar", count: 1}, {type: "strawberry", count: 1}]},
-	{name: "Melonenkonfit&uuml;re", type: "melonmarmelade", machine: "oven", time: 1, sell: 260, ingredients: [{type: "sugar", count: 1}, {type: "watermelon", count: 1}]}
+	{name: "Melonenkonfit&uuml;re", type: "melonmarmelade", machine: "oven", time: 1, sell: 260, ingredients: [{type: "sugar", count: 1}, {type: "watermelon", count: 1}]},
+	{name: "Pilzsuppe", type: "pilzsoup", machine: "oven", time: 1, sell: 20, ingredients: [{type: "pilz", count: 1}, {type: "water", count: 1}]},
+	{name: "Bretter", type: "woodenblank", machine: "tooltable", time: 0, sell: 20, ingredients: [{type: "wodden", count: 1}]},
+	{name: "Schaukelpferd", type: "hoppy", machine: "tooltable", time: 0, sell: 40, ingredients: [{type: "woodenblank", count: 2}]}
 ]
 
 var dialogActive;
@@ -220,6 +227,26 @@ function generateMining()
 	}while (i<250);	
 }
 
+function generateWood()
+{
+	var i = 0;
+	do
+	{
+		var x = Math.floor(Math.random() * 135);
+		var y = Math.floor(Math.random() * 50);
+		var random = Math.floor(Math.random() * $('.wood').length);
+		var cell = $('#'+y+"-"+x);
+		if(cell.hasClass("green"))
+		{
+			cell.removeClass("green");
+			cell.addClass($($(".wood")[random]).attr('id'));
+			cell.attr('type', $($(".wood")[random]).attr('id'))
+			cell.attr("funct", "getWoodType();");
+		}
+		i++;
+	}while (i<250);	
+}
+
 function getOre()
 {
 	var cell = $('.me');
@@ -227,6 +254,17 @@ function getOre()
 	$('#'+type).text(eval($('#'+type).text())+1);
 	cell.removeClass(type);
 	cell.addClass("stone");
+	cell.removeAttr('type')
+	cell.removeAttr("funct", "getOre();");
+}
+
+function getWoodType()
+{
+	var cell = $('.me');
+	var type = cell.attr('type');
+	$('#'+type).text(eval($('#'+type).text())+1);
+	cell.removeClass(type);
+	cell.addClass("green");
 	cell.removeAttr('type')
 	cell.removeAttr("funct", "getOre();");
 }
@@ -544,6 +582,13 @@ function saveGame()
 			saveFile.things.push(recipient);
 		});
 		$.each($('.mine'), function( index, value ) {
+			var recipientId= $(value).attr('id');
+			var recipient = {};
+			recipient.id=recipientId;
+			recipient.value=$('#'+recipientId).text();
+			saveFile.things.push(recipient);
+		});
+		$.each($('.wood'), function( index, value ) {
 			var recipientId= $(value).attr('id');
 			var recipient = {};
 			recipient.id=recipientId;
@@ -1019,6 +1064,14 @@ function buildMineHouseDialog()
 	addDialog({speaker: 'speaker-me', text: 'Was soll ich kaufen?', options: options});
 }
 
+function buildWoodHouseDialog()
+{
+	var options = [];
+	options.push({text: 'Waldrobotor (25000 Euro)', funct: 'buildBuilding(\'woodrobotor\', 25000);'});
+	options.push({text: 'Nichts', funct: 'closeDialog()'});	
+	addDialog({speaker: 'speaker-me', text: 'Was soll ich kaufen?', options: options});
+}
+
 function machineDialog()
 {
 	var cell = $('.me');
@@ -1077,6 +1130,35 @@ function getTenMineFloors()
 			i++;
 		}while(i<10)
 		enterMapWithoutLoading('mine', 'minehouse');
+		$('.loader').hide();
+	}, 1);
+}
+
+function woodRobotorDialog()
+{
+	addDialog({speaker: 'speaker-me', text: 'Soll ich mit der Machine 10 Waldst&uuml;cke abarbeiten?', options: [{text: 'Ja', funct: 'getTenWoods()'}, {text: 'Nein', funct: 'closeDialog()'}, {text: 'Robotor vernichten', funct: 'destroyBuilding()'}]});
+}
+
+function getTenWoods()
+{
+	$('.loader').show();
+	setTimeout(function() {
+		var i = 0;
+		do
+		{
+			var cell = $('.me');
+			var newMap = 'wood';
+			var oldMap = $('#world').attr("name");
+			enterMapWithoutLoading(oldMap, newMap);
+			$.each($("[funct^='getWoodType']"), function( i, value ) {
+				var me = $(".me");
+				$(value).addClass('me');
+				me.removeClass('me');
+				getWoodType();
+			});
+			i++;
+		}while(i<10)
+		enterMapWithoutLoading('wood', 'woodhouse');
 		$('.loader').hide();
 	}, 1);
 }

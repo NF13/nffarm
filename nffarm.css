@@ -73,12 +73,24 @@
 	background-color: darkred;
 }
 
+.wodden{
+	background-color: saddlebrown;
+}
+
+.pilz{
+	background-color: brown;
+}
+
 .home {
 	background-color: brown;
 }
 
 .minehouse {
 	background-color: saddlebrown;
+}
+
+.woodhouse {
+	background-color: red;
 }
 
 .field {
@@ -570,6 +582,28 @@
 	font-size: 50%;
 }
 
+.tooltable
+{
+	background-color: saddlebrown;
+	color: silver;
+}
+
+.tooltable:not([recipient="none"])
+{
+	color: white;
+}
+
+.tooltable[timeneeded="0"]:not([recipient="none"])
+{
+	color: yellow;
+}
+
+.tooltable:after
+{
+	content: "|^^|";
+	font-size: 50%;
+}
+
 .fillrobotor
 {
 	background-color: silver;
@@ -601,6 +635,18 @@
 }
 
 .minerobotor:after
+{
+	content: "-O-";
+	font-size: 50%;
+}
+
+.woodrobotor
+{
+	background-color: lightslategrey ;
+	color: black;
+}
+
+.woodrobotor:after
 {
 	content: "-O-";
 	font-size: 50%;
