@@ -45,7 +45,7 @@ var templates = [
 				
 var machines = [
 	{name: "Ofen", type: "oven", price: 10000},
-	{name: "K&auml;sepresse", type: "cheesepress", price: 15000},
+	{name: "Presse", type: "cheesepress", price: 15000},
 	{name: "&Ouml;ldestilator", type: "oildestilation", price: 15000},
 	{name: "Spritzgussmaschine", type: "injectionmolding", price: 15000},
 	{name: "Schmelzofen", type: "furnace", price: 15000},
@@ -72,7 +72,8 @@ var recipients = [
 	{name: "Bretter", type: "woodenblank", machine: "tooltable", time: 0, sell: 20, ingredients: [{type: "wodden", count: 1}]},
 	{name: "Schaukelpferd", type: "hoppy", machine: "tooltable", time: 0, sell: 50, ingredients: [{type: "woodenblank", count: 2}]},
 	{name: "Pullover", type: "pullover", machine: "textiltable", time: 0, sell: 250, ingredients: [{type: "sheep", count: 2}]},
-	{name: "Socken", type: "sock", machine: "textiltable", time: 0, sell: 125, ingredients: [{type: "sheep", count: 1}]}
+	{name: "Socken", type: "sock", machine: "textiltable", time: 0, sell: 125, ingredients: [{type: "sheep", count: 1}]},
+	{name: "Wein", type: "wine", machine: "cheesepress", time: 2, sell: 250, ingredients: [{type: "wineberry", count: 1}]}
 ]
 
 var dialogActive;

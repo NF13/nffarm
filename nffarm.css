@@ -148,6 +148,15 @@
 	color: red;
 }
 
+.wineberry:after {
+	content: ":||:";
+	font-size: 50%;
+}
+
+.wineberry {
+	color: blue;
+}
+
 .bean:after {
 	content: "|||||";
 	font-size: 50%;
