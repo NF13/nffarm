@@ -50,7 +50,8 @@ var machines = [
 	{name: "Spritzgussmaschine", type: "injectionmolding", price: 15000},
 	{name: "Schmelzofen", type: "furnace", price: 15000},
 	{name: "Konzervierung", type: "conserver", price: 15000},
-	{name: "Werkbank", type: "tooltable", price: 15000}
+	{name: "Werkbank", type: "tooltable", price: 15000},
+	{name: "Textilverarbeitung", type: "textiltable", price: 15000}
 ];
 
 var recipients = [
@@ -69,7 +70,9 @@ var recipients = [
 	{name: "Melonenkonfit&uuml;re", type: "melonmarmelade", machine: "oven", time: 1, sell: 260, ingredients: [{type: "sugar", count: 1}, {type: "watermelon", count: 1}]},
 	{name: "Pilzsuppe", type: "pilzsoup", machine: "oven", time: 1, sell: 20, ingredients: [{type: "pilz", count: 1}, {type: "water", count: 1}]},
 	{name: "Bretter", type: "woodenblank", machine: "tooltable", time: 0, sell: 20, ingredients: [{type: "wodden", count: 1}]},
-	{name: "Schaukelpferd", type: "hoppy", machine: "tooltable", time: 0, sell: 40, ingredients: [{type: "woodenblank", count: 2}]}
+	{name: "Schaukelpferd", type: "hoppy", machine: "tooltable", time: 0, sell: 50, ingredients: [{type: "woodenblank", count: 2}]},
+	{name: "Pullover", type: "pullover", machine: "textiltable", time: 0, sell: 250, ingredients: [{type: "sheep", count: 2}]},
+	{name: "Socken", type: "sock", machine: "textiltable", time: 0, sell: 125, ingredients: [{type: "sheep", count: 1}]}
 ]
 
 var dialogActive;

@@ -261,6 +261,49 @@
 	);
 }
 
+.sheep:after {
+	content: ":88:";
+	font-size: 50%;
+}
+
+.sheep {
+	color: black;
+	background-color: white;
+}
+
+.sheep[feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		white 85%,
+		brown 15%
+	);
+}
+
+.sheep[watered="true"] {
+	background: linear-gradient(
+		to bottom,
+		white 85%,
+		blue 15%
+	);
+}
+
+.sheep[watered="true"][feeded="true"] {
+	background: linear-gradient(
+		to bottom,
+		white 50%,
+		blue,
+		brown
+	);
+}
+
+.sheep[pregnant="0"][spendtime="0"] {
+	background: linear-gradient(
+		to bottom,
+		white 85%,
+		orange 15%
+	);
+}
+
 .chicken:after {
 	content: "_o_";
 	font-size: 50%;
@@ -367,6 +410,28 @@
 .conserver:after
 {
 	content: "|[]|";
+	font-size: 50%;
+}
+
+.textiltable
+{
+	background-color: saddlebrown;
+	color: white;
+}
+
+.textiltable:not([recipient="none"])
+{
+	color: red;
+}
+
+.textiltable[timeneeded="0"]:not([recipient="none"])
+{
+	color: yellow;
+}
+
+.textiltable:after
+{
+	content: "|##|";
 	font-size: 50%;
 }
 
