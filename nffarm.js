@@ -45,7 +45,8 @@ var machines = [
 	{name: "K&auml;sepresse", type: "cheesepress", price: 15000},
 	{name: "&Ouml;ldestilator", type: "oildestilation", price: 15000},
 	{name: "Spritzgussmaschine", type: "injectionmolding", price: 15000},
-	{name: "Schmelzofen", type: "furnace", price: 15000}
+	{name: "Schmelzofen", type: "furnace", price: 15000},
+	{name: "Konzervierung", type: "conserver", price: 15000}
 ];
 
 var recipients = [
@@ -55,7 +56,10 @@ var recipients = [
 	{name: "Plastik", type: "plastik", machine: "oildestilation", time: 1, sell: 200, ingredients: [{type: "oil", count: 10}]},
 	{name: "Gummiente", type: "rubberduck", machine: "injectionmolding", time: 0, sell: 600, ingredients: [{type: "plastik", count: 2}]},
 	{name: "Glass", type: "glass", machine: "furnace", time: 1, sell: 50, ingredients: [{type: "sand", count: 5}]},
-	{name: "Eisen", type: "iron", machine: "furnace", time: 1, sell: 100, ingredients: [{type: "ironore", count: 5}]}
+	{name: "Eisen", type: "iron", machine: "furnace", time: 1, sell: 100, ingredients: [{type: "ironore", count: 5}]},
+	{name: "Gurkenkonserven", type: "cukeconserv", machine: "conserver", time: 1, sell: 120, ingredients: [{type: "cuke", count: 1}, {type: "onion", count: 1}, {type: "water", count: 1}]},
+	{name: "Karottenkonserven", type: "carrotconserv", machine: "conserver", time: 1, sell: 30, ingredients: [{type: "carrot", count: 1}, {type: "water", count: 1}]},
+	{name: "Bohnenkonserven", type: "beanconserv", machine: "conserver", time: 1, sell: 100, ingredients: [{type: "bean", count: 1}, {type: "water", count: 1}]}
 ]
 
 var dialogActive;

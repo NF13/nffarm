@@ -146,6 +146,15 @@
 	color: brown;
 }
 
+.onion:after {
+	content: "::::";
+	font-size: 50%;
+}
+
+.onion {
+	color: silver;
+}
+
 .cow:after {
 	content: "::::";
 	font-size: 50%;
@@ -316,6 +325,28 @@
 .furnace:after
 {
 	content: ".[].";
+	font-size: 50%;
+}
+
+.conserver
+{
+	background-color: saddlebrown;
+	color: white;
+}
+
+.conserver:not([recipient="none"])
+{
+	color: red;
+}
+
+.conserver[timeneeded="0"]:not([recipient="none"])
+{
+	color: yellow;
+}
+
+.conserver:after
+{
+	content: "|[]|";
 	font-size: 50%;
 }
 
