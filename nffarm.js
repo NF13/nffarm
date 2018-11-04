@@ -59,7 +59,10 @@ var recipients = [
 	{name: "Eisen", type: "iron", machine: "furnace", time: 1, sell: 100, ingredients: [{type: "ironore", count: 5}]},
 	{name: "Gurkenkonserven", type: "cukeconserv", machine: "conserver", time: 1, sell: 120, ingredients: [{type: "cuke", count: 1}, {type: "onion", count: 1}, {type: "water", count: 1}]},
 	{name: "Karottenkonserven", type: "carrotconserv", machine: "conserver", time: 1, sell: 30, ingredients: [{type: "carrot", count: 1}, {type: "water", count: 1}]},
-	{name: "Bohnenkonserven", type: "beanconserv", machine: "conserver", time: 1, sell: 100, ingredients: [{type: "bean", count: 1}, {type: "water", count: 1}]}
+	{name: "Bohnenkonserven", type: "beanconserv", machine: "conserver", time: 1, sell: 100, ingredients: [{type: "bean", count: 1}, {type: "water", count: 1}]},
+	{name: "Zucker", type: "sugar", machine: "oven", time: 1, sell: 160, ingredients: [{type: "beet", count: 2}]},
+	{name: "Erdbeerkonfit&uuml;re", type: "strawberrymarmelade", machine: "oven", time: 1, sell: 300, ingredients: [{type: "sugar", count: 1}, {type: "strawberry", count: 1}]},
+	{name: "Melonenkonfit&uuml;re", type: "melonmarmelade", machine: "oven", time: 1, sell: 260, ingredients: [{type: "sugar", count: 1}, {type: "watermelon", count: 1}]}
 ]
 
 var dialogActive;

@@ -93,6 +93,14 @@
 	color: orange;
 }
 
+.beet:after {
+	content: "'''";
+}
+
+.beet {
+	color: silver;
+}
+
 .salat:after {
 	content: "*";
 }
