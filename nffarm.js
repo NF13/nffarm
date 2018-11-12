@@ -42,6 +42,22 @@ var templates = [
 					]
 				}
 ];
+
+var fountainTemplate = {};
+fountainTemplate.name = 'fountaintemplate';
+fountainTemplate.template = [];
+for(var cellX = 0; cellX < 7; cellX++)
+{
+	for(var cellY = 0; cellY < 7; cellY++)
+	{
+		var templateCell = {};
+		templateCell.x = cellX;
+		templateCell.y = cellY*-1;
+		templateCell.type='fountain';
+		fountainTemplate.template.push(templateCell);
+	}
+}
+templates.push(fountainTemplate);
 				
 var machines = [
 	{name: "Ofen", type: "oven", price: 10000},
@@ -62,9 +78,9 @@ var recipients = [
 	{name: "Gummiente", type: "rubberduck", machine: "injectionmolding", time: 0, sell: 600, ingredients: [{type: "plastik", count: 2}]},
 	{name: "Glass", type: "glass", machine: "furnace", time: 1, sell: 50, ingredients: [{type: "sand", count: 5}]},
 	{name: "Eisen", type: "iron", machine: "furnace", time: 1, sell: 100, ingredients: [{type: "ironore", count: 5}]},
-	{name: "Gurkenkonserven", type: "cukeconserv", machine: "conserver", time: 1, sell: 120, ingredients: [{type: "cuke", count: 1}, {type: "onion", count: 1}, {type: "water", count: 1}]},
-	{name: "Karottenkonserven", type: "carrotconserv", machine: "conserver", time: 1, sell: 30, ingredients: [{type: "carrot", count: 1}, {type: "water", count: 1}]},
-	{name: "Bohnenkonserven", type: "beanconserv", machine: "conserver", time: 1, sell: 100, ingredients: [{type: "bean", count: 1}, {type: "water", count: 1}]},
+	{name: "Gurkenkonserven", type: "cukeconserv", machine: "conserver", time: 1, sell: 120, ingredients: [{type: "cuke", count: 1}, {type: "onion", count: 1}, {type: "water", count: 1}, {type: "glass", count: 1}]},
+	{name: "Karottenkonserven", type: "carrotconserv", machine: "conserver", time: 1, sell: 30, ingredients: [{type: "carrot", count: 1}, {type: "water", count: 1}, {type: "iron", count: 1}]},
+	{name: "Bohnenkonserven", type: "beanconserv", machine: "conserver", time: 1, sell: 100, ingredients: [{type: "bean", count: 1}, {type: "water", count: 1}, {type: "iron", count: 1}]},
 	{name: "Zucker", type: "sugar", machine: "oven", time: 1, sell: 160, ingredients: [{type: "beet", count: 2}]},
 	{name: "Erdbeerkonfit&uuml;re", type: "strawberrymarmelade", machine: "oven", time: 1, sell: 300, ingredients: [{type: "sugar", count: 1}, {type: "strawberry", count: 1}]},
 	{name: "Melonenkonfit&uuml;re", type: "melonmarmelade", machine: "oven", time: 1, sell: 260, ingredients: [{type: "sugar", count: 1}, {type: "watermelon", count: 1}]},
@@ -93,7 +109,7 @@ function startGame()
 	generateWorld(home);
 	var cell = $('#'+2+"-"+2);
 	cell.addClass('me');
-	$('#money').text(1000);
+	$('#money').text(1200);
 	$('#carrot').text(0);
 	$('#carrotseed').text(10);
 	$('#water').text(10);
@@ -118,6 +134,22 @@ function startGame()
 		animal.initialAttributes.push({key: "watered", value: false});
 		animal.initialAttributes.push({key: "type", value: $(value).attr('id')});
 		buildings.push(animal);
+		var animalTemplate = {};
+		animalTemplate.name = $(value).attr('id')+'template';
+		animalTemplate.template = [];
+		for(var cellX = 0; cellX < 7; cellX++)
+		{
+			for(var cellY = 0; cellY < 7; cellY++)
+			{
+				var templateCell = {};
+				templateCell.x = cellX;
+				templateCell.y = cellY*-1;
+				templateCell.type=$(value).attr('id');
+				animalTemplate.template.push(templateCell);
+			}
+		}
+		templates.push(animalTemplate);
+		
 	});
 	$.each(machines, function( index, value ) {
 		var machine = {};
@@ -130,6 +162,21 @@ function startGame()
 		machine.initialAttributes.push({key: "type", value: value.type});
 		machine.initialAttributes.push({key: "recipient", value: "none"});
 		buildings.push(machine);
+		var machineTemplate = {};
+		machineTemplate.name = value.type+'template';
+		machineTemplate.template = [];
+		for(var cellX = 0; cellX < 7; cellX++)
+		{
+			for(var cellY = 0; cellY < 7; cellY++)
+			{
+				var templateCell = {};
+				templateCell.x = cellX;
+				templateCell.y = cellY*-1;
+				templateCell.type=value.type;
+				machineTemplate.template.push(templateCell);
+			}
+		}
+		templates.push(machineTemplate);
 	});
 
 }
@@ -1011,8 +1058,8 @@ function sell(id, money)
 {
 	if(eval($('#'+id).text())>=1)
 	{
-		addMoney(money);
-		$('#'+id).text(eval($('#'+id).text())-1);
+		addMoney(money*eval($('#'+id).text()));
+		$('#'+id).text(0);
 	}
 	else
 	{
@@ -1053,6 +1100,9 @@ function buildMachineDialog()
 	var options = [];
 	$.each(machines, function( index, value ) {
 		options.push({text: value.name+' ('+value.price+' Euro)', funct: 'buildBuilding(\''+value.type+'\', '+value.price+');'});
+	});
+	$.each(machines, function( index, value ) {
+		options.push({text: value.name+' Gruppe ('+value.price*59+' Euro)', funct: 'buildTemplate(\''+value.type+'template\', '+value.price*50+', \'floor\');'});
 	});
 	options.push({text: 'F&uuml;llrobotor (25000 Euro)', funct: 'buildBuilding(\'fillrobotor\', 25000);'});
 	options.push({text: 'Leerungsrobotor (25000 Euro)', funct: 'buildBuilding(\'emptyrobotor\', 25000);'});
@@ -1309,6 +1359,9 @@ function feedingTroughDialog()
 	var cell = $('.me');
 	var options = [];
 	options.push({text: '10 Weizen hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'wheat\', 10, \'feedingTroughDialog()\')'});
+	options.push({text: '100 Weizen hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'wheat\', 100, \'feedingTroughDialog()\')'});
+	options.push({text: '1000 Weizen hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'wheat\', 1000, \'feedingTroughDialog()\')'});
+	options.push({text: '10000 Weizen hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'wheat\', 10000, \'feedingTroughDialog()\')'});
 	options.push({text: 'Nichts', funct: 'closeDialog()'});
 	options.push({text: 'Zerst&ouml;ren', funct: 'destroyBuilding()'});		
 	addDialog({speaker: 'speaker-me', text: 'Im Futtertrog sind noch '+cell.attr("fill")+ " Einheiten was soll ich tun?", options: options});
@@ -1319,6 +1372,9 @@ function waterTroughDialog()
 	var cell = $('.me');
 	var options = [];
 	options.push({text: '10 Wasser hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'water\', 10, \'waterTroughDialog()\')'});
+	options.push({text: '100 Wasser hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'water\', 100, \'waterTroughDialog()\')'});
+	options.push({text: '1000 Wasser hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'water\', 1000, \'waterTroughDialog()\')'});
+	options.push({text: '10000 Wasser hinzuf&uuml;gen', funct: 'fillFeedingThrough(\'water\', 10000, \'waterTroughDialog()\')'});
 	options.push({text: 'Nichts', funct: 'closeDialog()'});
 	options.push({text: 'Zerst&ouml;ren', funct: 'destroyBuilding()'});		
 	addDialog({speaker: 'speaker-me', text: 'Im Wassertrog sind noch '+cell.attr("fill")+ " Einheiten was soll ich tun?", options: options});
@@ -1353,6 +1409,9 @@ function buildStableDialog()
 	var options = [];
 	$.each($('.animal'), function( index, value ) {
 		options.push({text: 'Baby-'+$(value).attr('animalname')+' ('+$(value).attr('buy')+' Euro)', funct: 'buildBuilding(\''+$(value).attr('id')+'\', '+$(value).attr('buy')+');'});
+	});
+	$.each($('.animal'), function( index, value ) {
+		options.push({text: 'Baby-'+$(value).attr('animalname')+' Gruppe ('+eval($(value).attr('buy'))*50+' Euro)', funct: 'buildTemplate(\''+$(value).attr('id')+'template\', '+eval($(value).attr('buy'))*50+', \'floor\');'});
 	});
 	options.push({text: 'Futtertrog (2000 Euro)', funct: 'buildBuilding(\'feedingtrough\', 2000)'});
 	options.push({text: 'Wassertrog (2000 Euro)', funct: 'buildBuilding(\'watertrough\', 2000)'});
@@ -1529,7 +1588,8 @@ function buildFarmDialog()
 		{text: 'Pflanzmaschine (10000 Euro)', funct: 'buildBuilding(\'planter\', 10000);'},
 		{text: 'Pumpe (10000 Euro)', funct: 'buildBuilding(\'pump\', 10000);'},
 		{text: 'M&uuml;lleimer (10 Euro)', funct: 'buildBuilding(\'trash\', 10);'},
-		{text: 'Felder mit Sprinkler (6000 Euro)', funct: 'buildTemplate(\'fieldtemplate\', 6000, \'green\');'}
+		{text: 'Felder mit Sprinkler (6000 Euro)', funct: 'buildTemplate(\'fieldtemplate\', 6000, \'green\');'},
+		{text: 'Brunnen-Gruppe (10000 Euro)', funct: 'buildTemplate(\'fountaintemplate\', 10000, \'green\');'}
 	];
 	var cell = $('.me');
 	var x = cell.attr('x');
@@ -1956,7 +2016,7 @@ function cleanWay()
 	if(Math.random() < 0.1)
 	{
 		addMoney(1);
-		addDialog({speaker: 'speaker-me', text: 'Der Weg ist wieder sauber, au&zslig;erdem hab ich einen Euro gefunden!', options: [{text: 'OK', funct: 'closeDialog()'}]});
+		addDialog({speaker: 'speaker-me', text: 'Der Weg ist wieder sauber, desweiteren hab ich einen Euro gefunden!', options: [{text: 'OK', funct: 'closeDialog()'}]});
 	}
 	else
 	{
